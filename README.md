@@ -79,92 +79,50 @@ public static void Run<T>(Action<IServiceConfiguration> configure) where T : ISe
 public static void Run(IServiceHostStart service, Action<IServiceConfiguration> configure)
 ```
 
-The `IServiceConfiguration` allows you to configure the service from code.  Configuration supplied through code has the highest precedence.
+## Windows
 
-## .Net 4.6+ options
+Installing on `Windows` requires using the [sc utility](https://docs.microsoft.com/en-us/windows/win32/services/controlling-a-service-using-sc):
 
-### Configuration Section
-
-You may also specify configuration using the following configuration which may, as all Shuttle configuration sections do, be grouped under a `shuttle` group.
-
-``` xml
-<configuration>
-  <configSections>
-    <section name="service" type="Shuttle.Core.ServiceHost.ServiceHostSection, Shuttle.Core.ServiceHost" />
-  </configSections>
-
-  <service
-    serviceName="test-service"
-    instance="one"
-    username="mr.resistor"
-    password="ohm"
-    startMode="Disabled" />
-</configuration>
+``` cmd
+sc create {service-name} binPath={path-to-exe}
 ```
 
-### Command Line (.Net 4.6+ only)
+## Linux
 
-The following command-line arguments are available and can be viewed by running `{your-console}.exe /?`:
+Using `Systemd` on `Linux` would require a `{SserviceName}.service` file in the `/etc/systemd/system/` folder:
 
-```
-{your-console}.exe [[/]action]
+``` sh
+[Unit]
+Description=Service created using Shuttle.Core.WorkerService
 
-	[action]:
-	- install (installs the service)
-	- uninstall (uninstalls the service)
-	- start (starts the service)
-	- stop (stops the service)
+[Service]
+ExecStart=/srv/somewhere/ServiceName
+# journalctl identifier
+SyslogIdentifier=HelloWorld
 
-[/serviceName="the-service-name"]
-	- install the service
-		
-[/displayName="display-name"]				
-	- friendly name for the installed service
-		
-[/description="description"]				
-	- Description for the service
-		
-[/instance="instance-name"]
-	- unique name of the instance you wish to install
-		
-[/startMode="start-mode"]
-	- specifies that the service start mode (Boot, System, Automatic, Manual, Disabled)
-		
-[/delayedAutoStart]
-	- if specified will delay services with a start mode of 'Automatic'
+User=username
 
-[/username="username" /password="password"]
-	- username and password of the account to use for the service
+Environment=DOTNET_ROOT={dotnet-path}
+
+[Install]
+WantedBy=multi-user.target
 ```
 
-### Service Name
+Then reload the `Systemd` configuration:
 
-If no `/serviceName` is specified the full name of the your console application along with the version number, e.g.:
-
-```
-Namespace.ConsoleApplication (1.0.0.0)
-```
-
-### Action
-
-If you set the `/serviceName` and/or `/instance` during installation you will need to specify them when using the other actions also as well, e.g.:
-
-```
-{your=console}.exe 
-	uninstall|start|stop
-	/serviceName:"Shuttle.Application.Server" 
-	/instance:"Instance5"
+``` sh
+sudo systemctl daemon-reload
+sudo systemctl start {ServiceName}
 ```
 
-### Example
+You can then view the status using:
 
-```
-{your=console}.exe 
-	install 
-	/serviceName:"Shuttle.Application.Server" 
-	/displayName:"Shuttle server for the application"
-	/description:"Service to handle messages relating to the application." 
-	/username:"domain\hostuser"
-	/password:"p@ssw0rd!"
+``` sh
+sudo systemctl status {ServiceName}
 ```
 
+The log can be viewed as follows:
+
+``` sh
+sudo journalctl -u HelloWorld
+```
