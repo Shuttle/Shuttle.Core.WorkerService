@@ -12,7 +12,7 @@
     <PackageReference Include="Shuttle.Core.Cli" Version="10.1.0" />
     <PackageReference Include="Shuttle.Core.Contract" Version="10.0.3" />
     <PackageReference Include="Shuttle.Core.Logging" Version="10.0.4" />
-    <PackageReference Include="Shuttle.Core.Reflection" Version="11.0.2" />
+    <PackageReference Include="Shuttle.Core.Reflection" Version="11.0.3" />
   </ItemGroup>
 
   <ItemGroup>
