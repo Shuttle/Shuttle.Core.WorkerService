@@ -32,7 +32,9 @@ namespace Shuttle.Core.WorkerService
 
                 var build = builder
                     .UseWindowsService()
+#if NETSTANDARD2_1_OR_GREATER
                     .UseSystemd()
+#endif
                     .Build();
 
                 service.Start(build.Services);
