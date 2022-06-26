@@ -24,19 +24,27 @@ namespace Shuttle.Core.WorkerService
 
             try
             {
-                service.Start();
+                var builder = Host.CreateDefaultBuilder();
+
+                var serviceHostBuilder = service as IServiceHostBuilder;
+
+                serviceHostBuilder?.Configure(builder);
+
+                var build = builder
+                    .UseWindowsService()
+                    .UseSystemd()
+                    .Build();
+
+                service.Start(build.Services);
 
                 Console.WriteLine();
-                ConsoleExtensions.WriteLine(ConsoleColor.Green, $"[started] : '{Assembly.GetEntryAssembly()?.FullName ?? "(could not find the entry assembly)"}'.");
+                ConsoleExtensions.WriteLine(ConsoleColor.Green,
+                    $"[started] : '{Assembly.GetEntryAssembly()?.FullName ?? "(could not find the entry assembly)"}'.");
                 Console.WriteLine();
                 ConsoleExtensions.WriteLine(ConsoleColor.DarkYellow, "[press ctrl+c to stop]");
                 Console.WriteLine();
 
-                Host.CreateDefaultBuilder()
-                    .UseWindowsService()
-                    .UseSystemd()
-                    .Build()
-                    .Run();
+                build.Run();
 
                 (service as IServiceHostStop)?.Stop();
                 (service as IDisposable)?.Dispose();

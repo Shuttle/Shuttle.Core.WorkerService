@@ -1,7 +1,9 @@
-﻿namespace Shuttle.Core.WorkerService
+﻿using System;
+
+namespace Shuttle.Core.WorkerService
 {
     public interface IServiceHostStart
     {
-        void Start();
+        void Start(IServiceProvider services);
     }
 }

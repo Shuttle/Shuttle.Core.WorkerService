@@ -1,16 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.1" Condition=" '$(TargetFramework)'=='net5.0'" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" Condition=" '$(TargetFramework)'=='net5.0'" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
     <PackageReference Include="Shuttle.Core.Cli" Version="10.1.0" />
-    <PackageReference Include="Shuttle.Core.Contract" Version="10.0.3" />
+    <PackageReference Include="Shuttle.Core.Contract" Version="10.1.0" />
     <PackageReference Include="Shuttle.Core.Logging" Version="10.0.4" />
     <PackageReference Include="Shuttle.Core.Reflection" Version="11.0.3" />
   </ItemGroup>
@@ -21,6 +19,12 @@
     <None Include=".package\package.nuspec.template" />
     <None Include=".package\Shuttle.NuGetPackager.MSBuild.dll" />
     <None Include=".package\Shuttle.NuGetPackager.targets" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd">
+      <Version>6.0.0</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
