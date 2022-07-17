@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using Shuttle.Core.Cli;
 using Shuttle.Core.Contract;
-using Shuttle.Core.Logging;
 using Shuttle.Core.Reflection;
 
 namespace Shuttle.Core.WorkerService
@@ -18,7 +17,6 @@ namespace Shuttle.Core.WorkerService
             try
             {
                 var arguments = new Arguments(Environment.GetCommandLineArgs());
-                var action = arguments.CommandLine.Length > 1 ? arguments.CommandLine[1] : string.Empty;
 
                 if (ShouldShowHelp(arguments))
                 {
@@ -31,55 +29,6 @@ namespace Shuttle.Core.WorkerService
                 {
                     Debugger.Launch();
                 }
-
-                var install = arguments.Contains("install") ||
-                              action.Equals("install", StringComparison.InvariantCultureIgnoreCase);
-                var uninstall = arguments.Contains("uninstall") ||
-                                action.Equals("uninstall", StringComparison.InvariantCultureIgnoreCase);
-
-                var start = arguments.Contains("start") ||
-                            action.Equals("start", StringComparison.InvariantCultureIgnoreCase);
-                var stop = arguments.Contains("stop") ||
-                           action.Equals("stop", StringComparison.InvariantCultureIgnoreCase);
-                var timeoutValue = arguments.Get("timeout", "30000");
-
-                if (!int.TryParse(timeoutValue, out var timeout))
-                {
-                    timeout = 30000;
-                }
-
-                //    configuration.WithTimeout(timeout);
-
-                //    if (uninstall)
-                //    {
-                //        new WindowsServiceInstaller().Uninstall(configuration);
-
-                //        result= true;
-                //    }
-
-                //    if (install)
-                //    {
-                //        new WindowsServiceInstaller().Install(configuration);
-
-                //        result = true;
-                //    }
-
-                //    if (stop || start)
-                //    {
-                //        var controller = new ServiceHostController(configuration);
-
-                //        if (stop)
-                //        {
-                //            controller.Stop();
-                //        }
-
-                //        if (start)
-                //        {
-                //            controller.Start();
-                //        }
-
-                //        result = true;
-                //    }
             }
             catch (Exception ex)
             {
@@ -93,8 +42,6 @@ namespace Shuttle.Core.WorkerService
                 }
                 else
                 {
-                    Log.Fatal($"[UNHANDLED EXCEPTION] : exception = {ex.AllMessages()}");
-
                     throw;
                 }
 

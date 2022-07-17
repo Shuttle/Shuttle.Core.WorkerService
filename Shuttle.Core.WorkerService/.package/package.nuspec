@@ -18,8 +18,7 @@
       <dependency id="Microsoft.Extensions.Hosting.WindowsServices" version="6.0.0" />
       <dependency id="Shuttle.Core.Cli" version="10.1.0" />
       <dependency id="Shuttle.Core.Contract" version="10.1.0" />
-      <dependency id="Shuttle.Core.Logging" version="10.0.4" />
-      <dependency id="Shuttle.Core.Reflection" version="11.0.3" />
+      <dependency id="Shuttle.Core.Reflection" version="12.0.0" />
       <dependency id="Microsoft.Extensions.Hosting.Systemd" version="6.0.0" />
 		</dependencies>
 	</metadata>

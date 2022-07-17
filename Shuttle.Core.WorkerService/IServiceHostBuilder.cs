@@ -4,6 +4,6 @@ namespace Shuttle.Core.WorkerService
 {
     public interface IServiceHostBuilder
     {
-        void Configure(IHostBuilder builder);
+        void Configure(IHostBuilder hostBuilder);
     }
 }

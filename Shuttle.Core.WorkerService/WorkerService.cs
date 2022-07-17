@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Shuttle.Core.Contract;
-using Shuttle.Core.Logging;
 
 namespace Shuttle.Core.WorkerService
 {
@@ -22,40 +23,35 @@ namespace Shuttle.Core.WorkerService
 
             Guard.AgainstNull(service, nameof(service));
 
-            try
-            {
-                var builder = Host.CreateDefaultBuilder();
+            var builder = Host.CreateDefaultBuilder();
 
-                var serviceHostBuilder = service as IServiceHostBuilder;
+            var serviceHostBuilder = service as IServiceHostBuilder;
 
-                serviceHostBuilder?.Configure(builder);
+            serviceHostBuilder?.Configure(builder);
 
-                var build = builder
-                    .UseWindowsService()
+            var host = builder
+                .UseWindowsService()
 #if NETSTANDARD2_1_OR_GREATER
-                    .UseSystemd()
+                .UseSystemd()
 #endif
-                    .Build();
+                .Build();
 
-                service.Start(build.Services);
+            service.Start(host.Services);
 
-                Console.WriteLine();
-                ConsoleExtensions.WriteLine(ConsoleColor.Green,
-                    $"[started] : '{Assembly.GetEntryAssembly()?.FullName ?? "(could not find the entry assembly)"}'.");
-                Console.WriteLine();
-                ConsoleExtensions.WriteLine(ConsoleColor.DarkYellow, "[press ctrl+c to stop]");
-                Console.WriteLine();
+            Console.WriteLine();
+            ConsoleExtensions.WriteLine(ConsoleColor.Green,
+                $"[starting] : '{Assembly.GetEntryAssembly()?.FullName ?? "(could not find the entry assembly)"}'.");
+            Console.WriteLine();
 
-                build.Run();
+            var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
+            applicationLifetime.ApplicationStopping.Register(() =>
+            {
                 (service as IServiceHostStop)?.Stop();
                 (service as IDisposable)?.Dispose();
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex.Message);
-                throw;
-            }
+            });
+
+            host.Run();
         }
 
         private static bool CommandProcessed()

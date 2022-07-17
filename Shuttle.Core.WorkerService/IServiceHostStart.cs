@@ -4,6 +4,6 @@ namespace Shuttle.Core.WorkerService
 {
     public interface IServiceHostStart
     {
-        void Start(IServiceProvider services);
+        void Start(IServiceProvider serviceProvider);
     }
 }
